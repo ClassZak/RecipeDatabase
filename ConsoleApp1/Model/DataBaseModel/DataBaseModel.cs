@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp1.Model.DBModel
+﻿namespace ConsoleApp1.Model.DataBaseModel
 {
 	public abstract class DataBaseModel
 	{

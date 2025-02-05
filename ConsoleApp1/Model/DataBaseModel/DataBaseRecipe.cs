@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1.Model.DBModel
+namespace ConsoleApp1.Model.DataBaseModel
 {
-	public class RecipeDataBase : DataBaseModel
+	public class DataBaseRecipe : DataBaseModel
 	{
-		private RecipeModel _recipe = new();
-		public RecipeDataBase(RecipeModel recipe)
+		private Recipe _recipe = new();
+		public DataBaseRecipe(Recipe recipe)
 		{
 			_recipe = recipe;
 		}
