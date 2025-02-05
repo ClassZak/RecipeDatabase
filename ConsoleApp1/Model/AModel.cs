@@ -6,15 +6,8 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1.Model
 {
-	public class Ingredient : AModel
+	public class AModel
 	{
-		public string? Name { get; set; }
-		public Ingredient()
-		{
-		}
-		public Ingredient(string name)
-		{
-			Name = name;
-		}
+		public int Id { get; set; }
 	}
 }

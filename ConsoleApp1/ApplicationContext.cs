@@ -1,10 +1,6 @@
-﻿using ConsoleApp1.Model.DataBaseModel;
+﻿
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ConsoleApp1.Model;
 
 namespace ConsoleApp1
 {
@@ -17,9 +13,24 @@ namespace ConsoleApp1
 			Database.EnsureCreated();
 		}
 
-		public DbSet<DataBaseRecipe> Recipe { get; set; }
-		public DbSet<DataBaseIngredient> Ingredient { get; set; }
-		public DbSet<DataBaseRecipeIngredient> RecipeIngredient { get; set; }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+			{
+				// Убираем "s" в конце имени таблицы
+				var tableName = entityType.GetTableName();
+				if (tableName != null && tableName.EndsWith("s"))
+				{
+					entityType.SetTableName(tableName.Substring(0, tableName.Length - 1));
+				}
+			}
+
+			base.OnModelCreating(modelBuilder);
+		}
+
+		public DbSet<Recipe> Recipe { get; set; }
+		public DbSet<Ingredient> Ingredient { get; set; }
+		public DbSet<RecipeIngredient> RecipeIngredient { get; set; }
 
 
 		public void AddNewIngredient(Model.Ingredient ingredient, bool addUnique = false)
@@ -36,17 +47,17 @@ namespace ConsoleApp1
 				}
 			}
 			if (allowAdding)
-				Ingredient.Add(new(ingredient));
+				Ingredient.Add(ingredient);
 		}
 		public void AddNewRecipe(Model.Recipe recipe, List<int> ingredients)
 		{
 			if (ingredients.Count < 0)
 				throw new Exception("Wrong recipe. No ingredients");
 
-			Recipe.Add(new(recipe));
+			Recipe.Add(recipe);
 
 			foreach (var ingredient in ingredients)
-				RecipeIngredient.Add(new(new Model.RecipeIngredient(Recipe.ToList().Last().Id, ingredient)));
+				RecipeIngredient.Add(new Model.RecipeIngredient(Recipe.ToList().Last().Id, ingredient));
 		}
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
