@@ -16,7 +16,7 @@ namespace RecipeDatabase1
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		string connectionString = "Server=localhost;Database=hellodb;Trusted_Connection=True;Encrypt=false;";
+		string connectionString = "Server=localhost;Database=RecipeDataBase;Trusted_Connection=True;Encrypt=false;";
 		View.Recipe? _recipeView;
 		public MainWindow()
 		{
@@ -55,7 +55,8 @@ namespace RecipeDatabase1
 
 					var ingredients = applicationContext.Ingredient.ToList().Where(x => recipeIngredients.Any(y => y.IdIngredient == x.Id));
 					foreach (var ingredient in ingredients)
-						stringBuilder.AppendLine(ingredient.Name);
+						stringBuilder.Append(ingredient.Name+"\n");
+					stringBuilder.Remove(stringBuilder.Length - 1, 1);
 
 					viewModelRecipes.Add(new ViewModel.Recipe(recipe.Name!, recipe.Actions!, stringBuilder.ToString()));
 				}
@@ -82,6 +83,53 @@ namespace RecipeDatabase1
 			{
 				UpdateRecipeView();
 			});
+		}
+
+		private void UpdateMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			Task.Run(() =>
+			{
+				UpdateRecipeView();
+			});
+		}
+
+		private void AddButton_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				if (RecipeNameTextBox.Text is null || RecipeNameTextBox.Text == string.Empty)
+				{
+					MessageBox.Show
+						("Введите название рецепта", "Пустое назва.ние!", MessageBoxButton.OK, MessageBoxImage.Warning);
+					return;
+				}
+				if (IngredientsTextBox.Text is null || IngredientsTextBox.Text == string.Empty)
+				{
+					MessageBox.Show
+						("Введите ингредиенты", "Пустое поле!", MessageBoxButton.OK, MessageBoxImage.Warning);
+					return;
+				}
+				if (ActionsTextBox.Text is null || ActionsTextBox.Text == string.Empty)
+				{
+					MessageBox.Show
+						("Введите описание приготовления", "Пустое поле!", MessageBoxButton.OK, MessageBoxImage.Warning);
+					return;
+				}
+
+				var ingredients=IngredientsTextBox.Text.Split("\r\n");
+
+				/*MessageBox.Show
+				(
+					$"Рецепт \"{newRecipe.Name}\" добавлен",
+					"Добавление рецепта",
+					MessageBoxButton.OK,
+					MessageBoxImage.Information
+				);*/
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message, "Ошибка добавления рецепта!", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 	}
 }
