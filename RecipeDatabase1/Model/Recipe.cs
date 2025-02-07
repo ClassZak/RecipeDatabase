@@ -2,8 +2,8 @@
 {
 	public class Recipe : AModel
 	{
-		public string? Name { get; set; }
-		public string? Actions { get; set; }
+		public string Name { get; set; }
+		public string Actions { get; set; }
 		public Recipe()
 		{
 		}
