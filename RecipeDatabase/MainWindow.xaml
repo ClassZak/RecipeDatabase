@@ -5,7 +5,6 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:RecipeDatabase"
 		mc:Ignorable="d"
-		Closing="Window_Closing"
 		Initialized="Window_Initialized"
 		Title="Книга рецептов"
         
@@ -30,10 +29,8 @@
             <MenuItem Header="Рецепты">
                 <MenuItem Header="Добавить новый" Click="AddMenuItem_Click"/>
                 <MenuItem Header="Удалить рецепт" Click="DeleteMenuItem_Click"/>
-                <MenuItem Header="Изменить рецепт" Click="EditMenuItem_Click"/>
-                <Separator/>
-                <MenuItem Header="Открыть папку с рецептами" Click="FolderMenuItem_Click"/>
-            </MenuItem>
+				<MenuItem Header="Изменить рецепт" Click="EditMenuItem_Click"/>
+			</MenuItem>
 
         </Menu>
         <TabControl  Grid.Row="1" Grid.RowSpan="2" SelectionChanged="TabControl_SelectionChanged" Name="TabControlPages">
@@ -64,48 +61,24 @@
                     >
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn
+								<GridViewColumn
                                     DisplayMemberBinding="{Binding Name}"
                                     Header="Название"
                                     Width="150"
                                 >
-                                    <!--GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Path=Name}" />
-                                                <Border Width="5" Background="Black" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate-->
-                                </GridViewColumn>
-                                <GridViewColumn
+								</GridViewColumn>
+								<GridViewColumn
                                     DisplayMemberBinding="{Binding Ingredients}"
                                     Header="Ингредиенты"
                                     Width="150"
                                 >
-                                    <!--GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Path=Ingredients}" />
-                                                <Border Width="5" Background="Black"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate-->
-                                </GridViewColumn>
-                                <GridViewColumn
+								</GridViewColumn>
+								<GridViewColumn
                                     DisplayMemberBinding="{Binding Actions}"
                                     Header="Приготовление"
                                     Width="150"
                                 >
-                                    <!--GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Path=Actions}" />
-                                                <Border Width="5" Background="Black"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate-->
-                                </GridViewColumn>
+								</GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>

@@ -14,6 +14,7 @@ namespace ConsoleApp1
 			// Добавление данных
 			using (ApplicationContext applicationContext = new ApplicationContext(connectionString))
 			{
+				applicationContext.Ingredient.Add(new("sdfsdf"));
 				int written= applicationContext.SaveChanges();
 				//if (written <= 0)
 				//	throw new Exception("Не удалось сохранить данные");
@@ -33,6 +34,8 @@ namespace ConsoleApp1
 					Console.WriteLine(ingredient);
 				foreach (var recipeIngredient in recipeIngredients)
 					Console.WriteLine(recipeIngredient);
+
+				var sel = applicationContext.Ingredient.Where(x => x.Id != 5646);
 			}
 		}
 	}

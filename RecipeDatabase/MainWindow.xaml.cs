@@ -23,7 +23,6 @@ namespace RecipeDatabase
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		DataBase _dataBase=new DataBase();
         PageChanges pageChanges = new PageChanges();
 
 		public MainWindow()
@@ -34,11 +33,6 @@ namespace RecipeDatabase
 		private void CloseMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
-		}
-		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			_dataBase.DeleteExtraFiles();
-			_dataBase.SaveData();
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -341,12 +335,6 @@ namespace RecipeDatabase
 		private void EditMenuItem_Click(object sender, RoutedEventArgs e)
         {
 			TabControlPages.SelectedIndex = 2;
-        }
-
-        private void FolderMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (System.IO.Directory.Exists(_dataBase.DATABASE_PATH))
-                Process.Start("explorer.exe", _dataBase.DATABASE_PATH);
         }
     }
 }
