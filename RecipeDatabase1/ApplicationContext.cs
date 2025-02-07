@@ -39,5 +39,6 @@ namespace RecipeDatabase1
 		public DbSet<Ingredient> Ingredient{ get; set; }
         public DbSet<Recipe> Recipe{ get; set; }
         public DbSet<RecipeIngredient> RecipeIngredient{ get; set; }
+        public DbSet<MeasureUnit> MeasureUnit{ get; set; }
 	}
 }

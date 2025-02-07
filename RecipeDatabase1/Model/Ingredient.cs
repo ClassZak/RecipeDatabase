@@ -3,6 +3,7 @@
 	public class Ingredient : AModel
 	{
 		public string? Name { get; set; }
+		public int? IdMeasureUnit{ get; set; }
 		public Ingredient()
 		{
 		}

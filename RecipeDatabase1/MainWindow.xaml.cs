@@ -50,12 +50,28 @@ namespace RecipeDatabase1
 				foreach (var recipe in recipes)
 				{
 					List<int> ingredientIds = new List<int>();
-					var recipeIngredients = applicationContext.RecipeIngredient.ToList().Where(x => x.IdRecipe == recipe.Id);
+					object recipeIngredients = applicationContext.RecipeIngredient.ToList();
+					recipeIngredients=(recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdRecipe == recipe.Id);
 					StringBuilder stringBuilder = new StringBuilder();
 
-					var ingredients = applicationContext.Ingredient.ToList().Where(x => recipeIngredients.Any(y => y.IdIngredient == x.Id));
-					foreach (var ingredient in ingredients)
-						stringBuilder.Append(ingredient.Name+"\n");
+					var ingredients = applicationContext.Ingredient.ToList().Where(x => (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Any(y => y.IdIngredient == x.Id));
+					List<int?> ingredientAmounts = new();
+					foreach(var ingredient in ingredients)
+					{
+						var ingredientAmount = (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdIngredient==ingredient.Id);
+						foreach (var recipeIngredient in ingredientAmount)
+							ingredientAmounts.Add(recipeIngredient.Amount);
+					}
+
+
+					for(int i=0;i<ingredients.Count();++i)
+					{
+						var ingredientMeasure = applicationContext.MeasureUnit.ToList().Where(x => x.Id == ingredients.ElementAt(i).IdMeasureUnit);
+						string ingredientName = "";
+						if(ingredientMeasure is not null)
+							ingredientName= !ingredientMeasure!.Any() ? "" : ingredientMeasure.First().Name!;
+						stringBuilder.Append($"{ingredients.ElementAt(i).Name}\t{ingredientAmounts[i]}\t{ingredientName}\n");
+					}
 					stringBuilder.Remove(stringBuilder.Length - 1, 1);
 
 					viewModelRecipes.Add(new ViewModel.Recipe(recipe.Name!, recipe.Actions!, stringBuilder.ToString()));
