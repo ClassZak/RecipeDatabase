@@ -124,16 +124,14 @@
 							</x:Array>
 						</DataGrid.ItemsSource>
 					</DataGrid-->
-					<DataGrid x:Name="dataGrid" 
-						Style="{x:Null}"
+					<DataGrid x:Name="dataGrid"
 						Margin="5"
+						SelectionMode="Extended"
 						IsReadOnly="False"
 						CanUserAddRows="True"
-						CanUserDeleteRows="True"
-						EnableRowVirtualization="False"
-						ItemsSource="{Binding Ingredients}"
-						Grid.Column="1"
 						Grid.Row="1"
+						Grid.ColumnSpan="3"
+						ItemsSource="{Binding Ingredients}"
 						>
 						<DataGrid.DataContext>
 							<View:Ingredient/>

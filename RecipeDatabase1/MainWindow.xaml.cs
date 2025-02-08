@@ -96,7 +96,11 @@ namespace RecipeDatabase1
 		{
 			_recipeView = (RecipesDataGrid.DataContext) as View.Recipe;
 			_ingredientView = (dataGrid.DataContext) as View.Ingredient;
-			
+			{
+				ViewModel.Ingredient ingredient = new("gh", null, "");
+				ingredient.IsEditable = true;
+				_ingredientView?.Add(ingredient);
+			}
 
 			Task.Run(() =>
 			{
