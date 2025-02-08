@@ -53,23 +53,17 @@
 					<TextBlock Text="Запрос:" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
 					<TextBox Grid.Column="2" Margin="5,5,5,5" Text="Все" Grid.ColumnSpan="2"/>
 
-					<DataGrid 
+
+					<DataGrid
 						x:Name="RecipesDataGrid"
-						Margin="5,5,5,5"
+						Margin="5"
 						Grid.Row="1"
-						Grid.ColumnSpan="4"
+						Grid.ColumnSpan="5"
 						ItemsSource="{Binding RecipesModelView}"
-						CanUserAddRows="True"
-						AutoGenerateColumns="False"
 					>
 						<DataGrid.DataContext>
 							<View:Recipe/>
 						</DataGrid.DataContext>
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
-							<DataGridTextColumn Header="Приготовление" Binding="{Binding Actions}"/>
-							<DataGridTextColumn Header="Ингредиенты" Binding="{Binding Ingredients}"/>
-						</DataGrid.Columns>
 					</DataGrid>
 				</Grid>
 			</TabItem>
@@ -116,21 +110,11 @@
 					<TextBox x:Name="RecipeNameTextBox" Grid.Column="1" Grid.Row="0" Margin="5" />
 
 					<TextBlock Text="Ингредиенты:" Grid.Row="1"/>
-					<!--DataGrid CanUserAddRows="True" AutoGenerateColumns="True">
-						<DataGrid.ItemsSource>
-							<x:Array Type="{x:Type local:User}">
-								<local:User Name="Alice"/>
-								<local:User Name="Bob"/>
-							</x:Array>
-						</DataGrid.ItemsSource>
-					</DataGrid-->
-					<DataGrid x:Name="dataGrid"
+					<DataGrid
+						x:Name="dataGrid"
 						Margin="5"
-						SelectionMode="Extended"
-						IsReadOnly="False"
-						CanUserAddRows="True"
 						Grid.Row="1"
-						Grid.ColumnSpan="3"
+						Grid.ColumnSpan="5"
 						ItemsSource="{Binding Ingredients}"
 						>
 						<DataGrid.DataContext>

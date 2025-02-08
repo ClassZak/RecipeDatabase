@@ -4,7 +4,7 @@ namespace RecipeDatabase1.ViewModel
 {
 	public class Ingredient
 	{
-		public bool IsEditable=false;
+		public bool IsEditable=true;
 
 
 		private string _name = "";
@@ -15,7 +15,10 @@ namespace RecipeDatabase1.ViewModel
 		public string Amount{ get { return _amount is null ? "" : $"{_amount}"; } set { if (IsEditable) _amount = int.Parse(value); } }
 		public Ingredient(Ingredient ingredient)
 		{
-			Name = ingredient.Name!;
+			_name = ingredient.Name!;
+		}
+		public Ingredient()
+		{
 		}
 		public Ingredient(string name, int? amount, string measureUnit)
 		{
