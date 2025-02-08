@@ -18,6 +18,7 @@ namespace RecipeDatabase1
 	{
 		string connectionString = "Server=localhost;Database=RecipeDataBase;Trusted_Connection=True;Encrypt=false;";
 		View.Recipe? _recipeView;
+		View.Ingredient? _ingredientView;
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -94,6 +95,8 @@ namespace RecipeDatabase1
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			_recipeView = (RecipesDataGrid.DataContext) as View.Recipe;
+			_ingredientView = (dataGrid.DataContext) as View.Ingredient;
+			
 
 			Task.Run(() =>
 			{
@@ -119,12 +122,12 @@ namespace RecipeDatabase1
 						("Введите название рецепта", "Пустое назва.ние!", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
 				}
-				if (IngredientsTextBox.Text is null || IngredientsTextBox.Text == string.Empty)
+				/*if (IngredientsTextBox.Text is null || IngredientsTextBox.Text == string.Empty)
 				{
 					MessageBox.Show
 						("Введите ингредиенты", "Пустое поле!", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
-				}
+				}*/
 				if (ActionsTextBox.Text is null || ActionsTextBox.Text == string.Empty)
 				{
 					MessageBox.Show
@@ -132,7 +135,7 @@ namespace RecipeDatabase1
 					return;
 				}
 
-				var ingredients=IngredientsTextBox.Text.Split("\r\n");
+				//var ingredients=IngredientsTextBox.Text.Split("\r\n");
 
 				/*MessageBox.Show
 				(

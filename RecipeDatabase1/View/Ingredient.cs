@@ -46,6 +46,11 @@ namespace RecipeDatabase1.View
 			IngredientsViewModels.Add(new ViewModel.Ingredient(element));
 			OnPropertyChanged(nameof(IngredientsViewModels));
 		}
+		public void Add(ViewModel.Ingredient element)
+		{
+			IngredientsViewModels.Add(element);
+			OnPropertyChanged(nameof(IngredientsViewModels));
+		}
 		public void Update(IEnumerable<Model.Ingredient> elements)
 		{
 			IngredientsViewModels.Clear();

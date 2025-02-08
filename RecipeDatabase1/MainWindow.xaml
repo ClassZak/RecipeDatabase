@@ -45,19 +45,21 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="120"/>
 						<ColumnDefinition Width="120"/>
-						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="57*"/>
+						<ColumnDefinition Width="220*"/>
 					</Grid.ColumnDefinitions>
 
-					<Button Content="Обновить" Margin="5" Click="UpdateButton_Click"/>
+					<Button Content="Обновить" Margin="5,5,5,5" Click="UpdateButton_Click"/>
 					<TextBlock Text="Запрос:" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
-					<TextBox Grid.Column="2" Margin="5" Text="Все"/>
+					<TextBox Grid.Column="2" Margin="5,5,5,5" Text="Все" Grid.ColumnSpan="2"/>
 
 					<DataGrid 
 						x:Name="RecipesDataGrid"
-						Margin="5"
+						Margin="5,5,5,5"
 						Grid.Row="1"
-						Grid.ColumnSpan="3"
+						Grid.ColumnSpan="4"
 						ItemsSource="{Binding RecipesModelView}"
+						CanUserAddRows="True"
 						AutoGenerateColumns="False"
 					>
 						<DataGrid.DataContext>
@@ -69,37 +71,6 @@
 							<DataGridTextColumn Header="Ингредиенты" Binding="{Binding Ingredients}"/>
 						</DataGrid.Columns>
 					</DataGrid>
-					<!--ListView
-						Name="Recipes"
-						Margin="5"
-						Grid.Row="1"
-						Grid.ColumnSpan="3"
-						SelectionMode="Single"
-						FocusVisualStyle="{Binding FontSize.Epsilon.Epsilon.Epsilon, ElementName=Recipes}" Foreground="Black" BorderThickness="3,3,3,3" d:ItemsSource="{d:SampleData ItemCount=5}"
-					>
-						<ListView.View>
-							<GridView>
-								<GridViewColumn
-									DisplayMemberBinding="{Binding Name}"
-									Header="Название"
-									Width="150"
-								>
-								</GridViewColumn>
-								<GridViewColumn
-									DisplayMemberBinding="{Binding Ingredients}"
-									Header="Ингредиенты"
-									Width="150"
-								>
-								</GridViewColumn>
-								<GridViewColumn
-									DisplayMemberBinding="{Binding Actions}"
-									Header="Приготовление"
-									Width="150"
-								>
-								</GridViewColumn>
-							</GridView>
-						</ListView.View>
-					</ListView-->
 				</Grid>
 			</TabItem>
 			<TabItem Header="Поиск (не работает)">
@@ -145,7 +116,29 @@
 					<TextBox x:Name="RecipeNameTextBox" Grid.Column="1" Grid.Row="0" Margin="5" />
 
 					<TextBlock Text="Ингредиенты:" Grid.Row="1"/>
-					<TextBox x:Name="IngredientsTextBox" Grid.Column="1" Grid.Row="1" Margin="5" TextWrapping="Wrap" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+					<!--DataGrid CanUserAddRows="True" AutoGenerateColumns="True">
+						<DataGrid.ItemsSource>
+							<x:Array Type="{x:Type local:User}">
+								<local:User Name="Alice"/>
+								<local:User Name="Bob"/>
+							</x:Array>
+						</DataGrid.ItemsSource>
+					</DataGrid-->
+					<DataGrid x:Name="dataGrid" 
+						Style="{x:Null}"
+						Margin="5"
+						IsReadOnly="False"
+						CanUserAddRows="True"
+						CanUserDeleteRows="True"
+						EnableRowVirtualization="False"
+						ItemsSource="{Binding Ingredients}"
+						Grid.Column="1"
+						Grid.Row="1"
+						>
+						<DataGrid.DataContext>
+							<View:Ingredient/>
+						</DataGrid.DataContext>
+					</DataGrid>
 
 					<TextBlock Text="Приготовление:" Grid.Row="2"/>
 					<TextBox x:Name="ActionsTextBox" Grid.Column="1" Grid.Row="2" Margin="5" TextWrapping="Wrap" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
