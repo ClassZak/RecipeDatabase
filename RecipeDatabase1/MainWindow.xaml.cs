@@ -95,10 +95,9 @@ namespace RecipeDatabase1
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			_recipeView = (RecipesDataGrid.DataContext) as View.Recipe;
-			_ingredientView = (dataGrid.DataContext) as View.Ingredient;
+			_ingredientView = (IngredientDataGrid.DataContext) as View.Ingredient;
 			{
 				ViewModel.Ingredient ingredient = new("gh", null, "");
-				ingredient.IsEditable = true;
 				_ingredientView?.Add(ingredient);
 			}
 
@@ -126,12 +125,6 @@ namespace RecipeDatabase1
 						("Введите название рецепта", "Пустое назва.ние!", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
 				}
-				/*if (IngredientsTextBox.Text is null || IngredientsTextBox.Text == string.Empty)
-				{
-					MessageBox.Show
-						("Введите ингредиенты", "Пустое поле!", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}*/
 				if (ActionsTextBox.Text is null || ActionsTextBox.Text == string.Empty)
 				{
 					MessageBox.Show
@@ -139,20 +132,24 @@ namespace RecipeDatabase1
 					return;
 				}
 
-				//var ingredients=IngredientsTextBox.Text.Split("\r\n");
-
-				/*MessageBox.Show
-				(
-					$"Рецепт \"{newRecipe.Name}\" добавлен",
-					"Добавление рецепта",
-					MessageBoxButton.OK,
-					MessageBoxImage.Information
-				);*/
+				List<ViewModel.Ingredient> selectedIngredients = new();
+				foreach(ViewModel.Ingredient ingredient in _ingredientView!.GetIngredients())
+					selectedIngredients.Add(ingredient);
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message, "Ошибка добавления рецепта!", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
+		}
+
+		private void IngredientDataGridDeleteMenu_Click(object sender, RoutedEventArgs e)
+		{
+			List<ViewModel.Ingredient> selectedItems = new();
+
+			foreach (ViewModel.Ingredient selectedItem in IngredientDataGrid.SelectedItems)
+				selectedItems.Add(selectedItem);
+			foreach (ViewModel.Ingredient selectedItem in selectedItems)
+				_ingredientView?.Remove(selectedItem);
 		}
 	}
 }

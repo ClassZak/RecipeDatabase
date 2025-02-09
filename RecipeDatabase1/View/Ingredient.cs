@@ -58,7 +58,15 @@ namespace RecipeDatabase1.View
 				IngredientsViewModels.Add(new ViewModel.Ingredient(element));
 			OnPropertyChanged(nameof(IngredientsViewModels));
 		}
-
+		public void Remove(ViewModel.Ingredient ingredient)
+		{
+			IngredientsViewModels.Remove(ingredient);
+			OnPropertyChanged(nameof(IngredientsViewModels));
+		}
+		public IEnumerable<ViewModel.Ingredient> GetIngredients()
+		{
+			return IngredientsViewModels;
+		}
 
 
 

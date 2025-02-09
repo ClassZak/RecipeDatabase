@@ -59,6 +59,8 @@
 						Margin="5"
 						Grid.Row="1"
 						Grid.ColumnSpan="5"
+						CanUserAddRows="False"
+						IsReadOnly="True"
 						ItemsSource="{Binding RecipesModelView}"
 					>
 						<DataGrid.DataContext>
@@ -111,15 +113,22 @@
 
 					<TextBlock Text="Ингредиенты:" Grid.Row="1"/>
 					<DataGrid
-						x:Name="dataGrid"
+						x:Name="IngredientDataGrid"
 						Margin="5"
+						Grid.Column="1"
 						Grid.Row="1"
 						Grid.ColumnSpan="5"
+						CanUserAddRows="True"
 						ItemsSource="{Binding Ingredients}"
 						>
 						<DataGrid.DataContext>
 							<View:Ingredient/>
 						</DataGrid.DataContext>
+						<DataGrid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Удалить" Click="IngredientDataGridDeleteMenu_Click"/>
+							</ContextMenu>
+						</DataGrid.ContextMenu>
 					</DataGrid>
 
 					<TextBlock Text="Приготовление:" Grid.Row="2"/>
