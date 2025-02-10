@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Accessibility;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -71,9 +72,9 @@ namespace RecipeDatabase1
 						string ingredientName = "";
 						if(ingredientMeasure is not null)
 							ingredientName= !ingredientMeasure!.Any() ? "" : ingredientMeasure.First().Name!;
-						stringBuilder.Append($"{ingredients.ElementAt(i).Name}\t{ingredientAmounts[i]}\t{ingredientName}\n");
+						stringBuilder.AppendLine($"{ingredients.ElementAt(i).Name} {ingredientAmounts[i]} {ingredientName}");
 					}
-					stringBuilder.Remove(stringBuilder.Length - 1, 1);
+					stringBuilder.Remove(stringBuilder.Length - 2, 2);
 
 					viewModelRecipes.Add(new ViewModel.Recipe(recipe.Name!, recipe.Actions!, stringBuilder.ToString()));
 				}
@@ -96,10 +97,6 @@ namespace RecipeDatabase1
 		{
 			_recipeView = (RecipesDataGrid.DataContext) as View.Recipe;
 			_ingredientView = (IngredientDataGrid.DataContext) as View.Ingredient;
-			{
-				ViewModel.Ingredient ingredient = new("gh", null, "");
-				_ingredientView?.Add(ingredient);
-			}
 
 			Task.Run(() =>
 			{
@@ -122,7 +119,7 @@ namespace RecipeDatabase1
 				if (RecipeNameTextBox.Text is null || RecipeNameTextBox.Text == string.Empty)
 				{
 					MessageBox.Show
-						("Введите название рецепта", "Пустое назва.ние!", MessageBoxButton.OK, MessageBoxImage.Warning);
+						("Введите название рецепта", "Пустое название!", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
 				}
 				if (ActionsTextBox.Text is null || ActionsTextBox.Text == string.Empty)
@@ -131,10 +128,60 @@ namespace RecipeDatabase1
 						("Введите описание приготовления", "Пустое поле!", MessageBoxButton.OK, MessageBoxImage.Warning);
 					return;
 				}
+				if (_ingredientView!.GetIngredients().Count() == 0)
+				{
+					MessageBox.Show
+						("Введите ингредиенты рецепта", "Пустые поля!", MessageBoxButton.OK, MessageBoxImage.Warning);
+					return;
+				}
 
-				List<ViewModel.Ingredient> selectedIngredients = new();
-				foreach(ViewModel.Ingredient ingredient in _ingredientView!.GetIngredients())
-					selectedIngredients.Add(ingredient);
+
+				using (ApplicationContext applicationContext = new ApplicationContext(connectionString))
+				{
+					Model.Recipe modelRecipe = new(RecipeNameTextBox.Text, ActionsTextBox.Text);
+
+
+					List<Model.RecipeIngredient> modelRecipeIngredients=new();
+					foreach(var ingredient in _ingredientView.GetIngredients().ToList())
+					{
+						if (string.IsNullOrWhiteSpace(ingredient.Name) || ingredient.Name == string.Empty)
+							continue;
+
+						Model.Ingredient modelIngredient;
+
+						if (applicationContext.MeasureUnit.ToList().Count == 0 && ingredient.MeasureUnit is not null)
+							applicationContext.MeasureUnit.Add(new Model.MeasureUnit(ingredient.MeasureUnit));
+						if(ingredient.MeasureUnit is not null && ingredient.MeasureUnit!=string.Empty && applicationContext.MeasureUnit.ToList().Count != 0)
+						{
+							var measureUnits = applicationContext.MeasureUnit.ToList().Where(x => x.Name!.ToLower() == ingredient?.MeasureUnit.ToLower());
+							if (!measureUnits.Any())
+								applicationContext.MeasureUnit.Add(new Model.MeasureUnit(ingredient.MeasureUnit));
+
+							Model.MeasureUnit measureUnitForIngredient= applicationContext.MeasureUnit.ToList().Where(x => x.Name == ingredient.MeasureUnit).Last();
+							modelIngredient = new(ingredient.Name.ToLower(), measureUnitForIngredient.Id);
+						}
+						else
+							modelIngredient = new(ingredient.Name.ToLower());
+
+						if(!applicationContext.Ingredient.ToList().Any(x=>x?.Name?.ToLower()==modelIngredient?.Name?.ToLower()))
+							applicationContext.Add(modelIngredient);
+						else
+							applicationContext.Ingredient.ToList().Where(x => x?.Name?.ToLower() == modelIngredient?.Name?.ToLower()).First().Name = ingredient.Name.ToLower();
+
+
+						applicationContext.SaveChanges();
+						modelRecipeIngredients.Add(new Model.RecipeIngredient(modelRecipe.Id, modelIngredient.Id, ingredient.GetAmount()));
+					}
+					applicationContext.Recipe.Add(modelRecipe);
+					applicationContext.SaveChanges();
+					foreach (var el in modelRecipeIngredients)
+						el.IdRecipe= applicationContext.Recipe.ToList().Where(x=>x.Name== modelRecipe.Name && x.Actions== modelRecipe.Actions).Last().Id;
+					foreach (Model.RecipeIngredient el in modelRecipeIngredients)
+						applicationContext.RecipeIngredient.Add(el);
+					applicationContext.SaveChanges();
+
+					MessageBox.Show($"Рецепт \"{modelRecipe.Name}\" успешно добавлен", "Рецепт успешно добавлен", MessageBoxButton.OK, MessageBoxImage.Information);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -146,8 +193,9 @@ namespace RecipeDatabase1
 		{
 			List<ViewModel.Ingredient> selectedItems = new();
 
-			foreach (ViewModel.Ingredient selectedItem in IngredientDataGrid.SelectedItems)
-				selectedItems.Add(selectedItem);
+			foreach (object selectedItem in IngredientDataGrid.SelectedItems)
+				if(selectedItem is ViewModel.Ingredient)
+					selectedItems.Add((selectedItem as ViewModel.Ingredient)!);
 			foreach (ViewModel.Ingredient selectedItem in selectedItems)
 				_ingredientView?.Remove(selectedItem);
 		}

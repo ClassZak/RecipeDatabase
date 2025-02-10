@@ -14,6 +14,7 @@ namespace RecipeDatabase1.Model
 		}
 		public MeasureUnit(string name)
 		{
+			Name=name;
 		}
 	}
 }

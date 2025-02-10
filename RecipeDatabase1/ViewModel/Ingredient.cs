@@ -10,7 +10,7 @@ namespace RecipeDatabase1.ViewModel
 
 		private string _name = "";
 		public string Name { get { return _name; } set {_name = value; } }
-		private string? _measureUnit;
+		private string? _measureUnit="шт";
 		public string MeasureUnit{ get { return _measureUnit is null ? "" : _measureUnit; } set {_measureUnit = value; } }
 		private int? _amount;
 		public string Amount
@@ -48,6 +48,12 @@ namespace RecipeDatabase1.ViewModel
 		public Ingredient(Model.Ingredient ingredient)
 		{
 			Name = ingredient.Name!;
+		}
+
+
+		public int? GetAmount()
+		{
+			return _amount;
 		}
 	}
 }

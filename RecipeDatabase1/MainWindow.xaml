@@ -61,11 +61,17 @@
 						Grid.ColumnSpan="5"
 						CanUserAddRows="False"
 						IsReadOnly="True"
+						AutoGenerateColumns="False"
 						ItemsSource="{Binding RecipesModelView}"
 					>
 						<DataGrid.DataContext>
 							<View:Recipe/>
 						</DataGrid.DataContext>
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
+							<DataGridTextColumn Header="Приготовление" Binding="{Binding Actions}"/>
+							<DataGridTextColumn Header="Ингредиенты" Binding="{Binding Ingredients}"/>
+						</DataGrid.Columns>
 					</DataGrid>
 				</Grid>
 			</TabItem>
@@ -119,6 +125,7 @@
 						Grid.Row="1"
 						Grid.ColumnSpan="5"
 						CanUserAddRows="True"
+						AutoGenerateColumns="False"
 						ItemsSource="{Binding Ingredients}"
 						>
 						<DataGrid.DataContext>
@@ -129,6 +136,11 @@
 								<MenuItem Header="Удалить" Click="IngredientDataGridDeleteMenu_Click"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Название"			Binding="{Binding Name}"/>
+							<DataGridTextColumn Header="Количество"			Binding="{Binding Amount}"/>
+							<DataGridTextColumn Header="Единицы измерения"	Binding="{Binding MeasureUnit}"/>
+						</DataGrid.Columns>
 					</DataGrid>
 
 					<TextBlock Text="Приготовление:" Grid.Row="2"/>

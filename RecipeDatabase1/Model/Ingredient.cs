@@ -7,9 +7,10 @@
 		public Ingredient()
 		{
 		}
-		public Ingredient(string name)
+		public Ingredient(string name, int? idMeasureUnit=null)
 		{
 			Name = name;
+			IdMeasureUnit = idMeasureUnit;
 		}
 	}
 }
