@@ -26,12 +26,10 @@
 			<MenuItem Header="Программа">
 				<MenuItem Header="Выход" Click="CloseMenuItem_Click"/>
 				<Separator/>
-				<MenuItem Header="Обновить данные" Click="UpdateMenuItem_Click"/>
+				<MenuItem Header="Обновить данные" Click="UpdateButton_Click"/>
 			</MenuItem>
 			<MenuItem Header="Рецепты">
 				<MenuItem Header="Добавить новый" Click="AddMenuItem_Click"/>
-				<MenuItem Header="Удалить рецепт" Click="DeleteMenuItem_Click"/>
-				<MenuItem Header="Изменить рецепт" Click="EditMenuItem_Click"/>
 			</MenuItem>
 		</Menu>
 
@@ -73,30 +71,6 @@
 							<DataGridTextColumn Header="Ингредиенты" Binding="{Binding Ingredients}"/>
 						</DataGrid.Columns>
 					</DataGrid>
-				</Grid>
-			</TabItem>
-			<TabItem Header="Поиск (не работает)">
-				<Grid Background="#FFE5E5E5">
-
-				</Grid>
-			</TabItem>
-			<TabItem Header="Редактировать рецепт">
-				<Grid Background="#FFE5E5E5">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="236*"/>
-						<ColumnDefinition Width="101*"/>
-						<ColumnDefinition Width="120"/>
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="30"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-
-					<TextBlock HorizontalAlignment="Left" Text="Выберете рецепт:" VerticalAlignment="Center" Margin="288,0,0,0"/>
-					<Button Content="Изменить" Grid.Column="2" Margin="5,5,5,5"/>
-
-					<ListBox Grid.Row="1" Margin="5,5,5,5" Name="EditSlectionListBox" Grid.ColumnSpan="2">
-					</ListBox>
 				</Grid>
 			</TabItem>
 			<TabItem Header="Добавление рецепта">
@@ -155,27 +129,7 @@
 					/>
 				</Grid>
 			</TabItem>
-			<TabItem Header="Удалить рецепт">
-				<Grid Background="#FFE5E5E5">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="120"/>
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="30"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-
-					<TextBlock HorizontalAlignment="Center" Text="Выберете рецепт:" VerticalAlignment="Center"/>
-					<Button Content="Удалить" Grid.Column="1" Margin="5" />
-
-					<ListBox Grid.Row="1" Margin="5" Name="DeleteSlectionListBox">
-					</ListBox>
-				</Grid>
-			</TabItem>
 		</TabControl>
-
-
 	</Grid>
 </Window>
 

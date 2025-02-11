@@ -31,17 +31,8 @@ namespace RecipeDatabase1
 		}
 		private void AddMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			TabControlPages.SelectedIndex = 3;
+			TabControlPages.SelectedIndex = 1;
 		}
-		private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			TabControlPages.SelectedIndex = 4;
-		}
-		private void EditMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			TabControlPages.SelectedIndex = 2;
-		}
-
 
 		private void UpdateRecipeView()
 		{
@@ -98,14 +89,6 @@ namespace RecipeDatabase1
 			_recipeView = (RecipesDataGrid.DataContext) as View.Recipe;
 			_ingredientView = (IngredientDataGrid.DataContext) as View.Ingredient;
 
-			Task.Run(() =>
-			{
-				UpdateRecipeView();
-			});
-		}
-
-		private void UpdateMenuItem_Click(object sender, RoutedEventArgs e)
-		{
 			Task.Run(() =>
 			{
 				UpdateRecipeView();
