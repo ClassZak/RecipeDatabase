@@ -1,4 +1,5 @@
 ﻿using Accessibility;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +33,7 @@ namespace RecipeDatabase1
 		private void AddMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			TabControlPages.SelectedIndex = 1;
-		}
+		} 
 
 		private void UpdateRecipeView()
 		{
@@ -67,7 +68,7 @@ namespace RecipeDatabase1
 					}
 					stringBuilder.Remove(stringBuilder.Length - 2, 2);
 
-					viewModelRecipes.Add(new ViewModel.Recipe(recipe.Name!, recipe.Actions!, stringBuilder.ToString()));
+					viewModelRecipes.Add(new ViewModel.Recipe(recipe.Name!, recipe.Actions!, stringBuilder.ToString(),recipe.Id));
 				}
 
 				Dispatcher.Invoke
@@ -172,6 +173,15 @@ namespace RecipeDatabase1
 			}
 		}
 
+		private void DeleteRecipes(List<ViewModel.Recipe> recipes)
+		{
+			List<int> recipeIds= new List<int>();
+			foreach (var recipe in recipes)
+				recipeIds.Add(recipe.GetId());
+
+			DeleteRecipes(recipeIds);
+		}
+
 		private void IngredientDataGridDeleteMenu_Click(object sender, RoutedEventArgs e)
 		{
 			List<ViewModel.Ingredient> selectedItems = new();
@@ -181,6 +191,43 @@ namespace RecipeDatabase1
 					selectedItems.Add((selectedItem as ViewModel.Ingredient)!);
 			foreach (ViewModel.Ingredient selectedItem in selectedItems)
 				_ingredientView?.Remove(selectedItem);
+		}
+
+
+
+		private void DeleteRecipes(List<int> recipeIds)
+		{
+			using (ApplicationContext applicationContext=new(connectionString))
+			{
+				for (int i = 0; i < recipeIds.Count; i++)
+					applicationContext.Database.ExecuteSqlRaw("DELETE FROM RecipeIngredient WHERE IdRecipe = {0}",recipeIds[i]);
+
+				for (int i = 0; i < recipeIds.Count; i++)
+					applicationContext.Database.ExecuteSqlRaw("DELETE FROM Recipe WHERE Id = {0}", recipeIds[i]);
+
+				applicationContext.SaveChanges();
+			}
+		}
+		private void DeleteSelectedRecipes(List<ViewModel.Recipe> recipes)
+		{
+			Task.Run(() =>
+			{
+				DeleteRecipes(recipes);
+				Dispatcher.Invoke(() =>
+				{
+					foreach(var el in recipes)
+						_recipeView?.Remove(el);
+				});
+			});
+		}
+		private void RecipeDataGridDeleteMenu_Click(object sender, RoutedEventArgs e)
+		{
+			List<ViewModel.Recipe> selectedItems = new();
+			foreach (var el in RecipesDataGrid.SelectedItems)
+				if (el is ViewModel.Recipe)
+					selectedItems.Add((el as ViewModel.Recipe)!);
+
+			DeleteSelectedRecipes(selectedItems);
 		}
 	}
 }

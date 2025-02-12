@@ -65,6 +65,13 @@
 						<DataGrid.DataContext>
 							<View:Recipe/>
 						</DataGrid.DataContext>
+
+						<DataGrid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Удалить" Click="RecipeDataGridDeleteMenu_Click"/>
+							</ContextMenu>
+						</DataGrid.ContextMenu>
+
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
 							<DataGridTextColumn Header="Приготовление" Binding="{Binding Actions}"/>

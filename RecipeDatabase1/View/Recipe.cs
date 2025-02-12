@@ -39,6 +39,16 @@ namespace RecipeDatabase1.View
 				RecipeViewModels.Add(element);
 			OnPropertyChanged(nameof(RecipeViewModels));
 		}
+		public void Remove(ViewModel.Recipe ingredient)
+		{
+			RecipeViewModels.Remove(ingredient);
+			OnPropertyChanged(nameof(RecipeViewModels));
+		}
+		public void Remove(int recipeIndex)
+		{
+			RecipeViewModels.RemoveAt(recipeIndex);
+			OnPropertyChanged(nameof(RecipeViewModels));
+		}
 
 
 		public event EventHandler CurrentChanged;

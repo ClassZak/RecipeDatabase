@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RecipeDatabase1.ViewModel
 {
-	public class Ingredient
+	public class Ingredient :AViewModel
 	{
 
 
@@ -30,14 +30,16 @@ namespace RecipeDatabase1.ViewModel
 				} 
 			}
 		}
-		public Ingredient(Ingredient ingredient)
+		public Ingredient(Ingredient ingredient):base(ingredient.GetId())
 		{
 			_name = ingredient.Name!;
+			_amount = ingredient._amount;
+			_measureUnit = ingredient._measureUnit;
 		}
 		public Ingredient()
 		{
 		}
-		public Ingredient(string name, int? amount, string measureUnit)
+		public Ingredient(string name, int? amount, string measureUnit, int id=0):base(id)
 		{
 			_name = name;
 			_amount = amount;
@@ -45,7 +47,7 @@ namespace RecipeDatabase1.ViewModel
 		}
 
 
-		public Ingredient(Model.Ingredient ingredient)
+		public Ingredient(Model.Ingredient ingredient) : base(ingredient.Id)
 		{
 			Name = ingredient.Name!;
 		}
