@@ -1,5 +1,6 @@
 ﻿using Accessibility;
 using Microsoft.EntityFrameworkCore;
+using RecipeDatabase1.Model;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,9 +58,9 @@ namespace RecipeDatabase1
 			try
 			{
 
-				using (ApplicationContext applicationContext = new(connectionString))
+				using (RecipeDataBaseContext RecipeDataBaseContext = new(connectionString))
 				{
-					var recipes = applicationContext.Recipe.ToList();
+					var recipes = RecipeDataBaseContext.Recipe.ToList();
 					List<ViewModel.Recipe> viewModelRecipes = new List<ViewModel.Recipe>();
 					Dispatcher.Invoke(() => 
 					{
@@ -75,11 +76,11 @@ namespace RecipeDatabase1
 						});
 
 						List<int> ingredientIds = new List<int>();
-						object recipeIngredients = applicationContext.RecipeIngredient.ToList();
+						object recipeIngredients = RecipeDataBaseContext.RecipeIngredient.ToList();
 						recipeIngredients=(recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdRecipe == recipes[recipeIndex].Id);
 						StringBuilder stringBuilder = new StringBuilder();
 
-						var ingredients = applicationContext.Ingredient.ToList().Where(x => (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Any(y => y.IdIngredient == x.Id));
+						var ingredients = RecipeDataBaseContext.Ingredient.ToList().Where(x => (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Any(y => y.IdIngredient == x.Id));
 						List<int?> ingredientAmounts = new();
 						foreach(var ingredient in ingredients)
 						{
@@ -91,7 +92,7 @@ namespace RecipeDatabase1
 
 						for(int i=0;i<ingredients.Count();++i)
 						{
-							var ingredientMeasure = applicationContext.MeasureUnit.ToList().Where(x => x.Id == ingredients.ElementAt(i).IdMeasureUnit);
+							var ingredientMeasure = RecipeDataBaseContext.MeasureUnit.ToList().Where(x => x.Id == ingredients.ElementAt(i).IdMeasureUnit);
 							string ingredientName = "";
 							if(ingredientMeasure is not null)
 								ingredientName= !ingredientMeasure!.Any() ? "" : ingredientMeasure.First().Name!;
@@ -169,7 +170,7 @@ namespace RecipeDatabase1
 				}
 
 
-				using (ApplicationContext applicationContext = new ApplicationContext(connectionString))
+				using (RecipeDataBaseContext RecipeDataBaseContext = new RecipeDataBaseContext(connectionString))
 				{
 					Model.Recipe modelRecipe = new(RecipeNameTextBox.Text, ActionsTextBox.Text);
 
@@ -182,36 +183,36 @@ namespace RecipeDatabase1
 
 						Model.Ingredient modelIngredient;
 
-						if (applicationContext.MeasureUnit.ToList().Count == 0 && ingredient.MeasureUnit is not null)
-							applicationContext.MeasureUnit.Add(new Model.MeasureUnit(ingredient.MeasureUnit));
-						if(ingredient.MeasureUnit is not null && ingredient.MeasureUnit!=string.Empty && applicationContext.MeasureUnit.ToList().Count != 0)
+						if (RecipeDataBaseContext.MeasureUnit.ToList().Count == 0 && ingredient.MeasureUnit is not null)
+							RecipeDataBaseContext.MeasureUnit.Add(new Model.MeasureUnit(ingredient.MeasureUnit));
+						if(ingredient.MeasureUnit is not null && ingredient.MeasureUnit!=string.Empty && RecipeDataBaseContext.MeasureUnit.ToList().Count != 0)
 						{
-							var measureUnits = applicationContext.MeasureUnit.ToList().Where(x => x.Name!.ToLower() == ingredient?.MeasureUnit.ToLower());
+							var measureUnits = RecipeDataBaseContext.MeasureUnit.ToList().Where(x => x.Name!.ToLower() == ingredient?.MeasureUnit.ToLower());
 							if (!measureUnits.Any())
-								applicationContext.MeasureUnit.Add(new Model.MeasureUnit(ingredient.MeasureUnit));
+								RecipeDataBaseContext.MeasureUnit.Add(new Model.MeasureUnit(ingredient.MeasureUnit));
 
-							Model.MeasureUnit measureUnitForIngredient= applicationContext.MeasureUnit.ToList().Where(x => x.Name == ingredient.MeasureUnit).Last();
+							Model.MeasureUnit measureUnitForIngredient= RecipeDataBaseContext.MeasureUnit.ToList().Where(x => x.Name == ingredient.MeasureUnit).Last();
 							modelIngredient = new(ingredient.Name.ToLower(), measureUnitForIngredient.Id);
 						}
 						else
 							modelIngredient = new(ingredient.Name.ToLower());
 
-						if(!applicationContext.Ingredient.ToList().Any(x=>x?.Name?.ToLower()==modelIngredient?.Name?.ToLower()))
-							applicationContext.Add(modelIngredient);
+						if(!RecipeDataBaseContext.Ingredient.ToList().Any(x=>x?.Name?.ToLower()==modelIngredient?.Name?.ToLower()))
+							RecipeDataBaseContext.Add(modelIngredient);
 						else
-							applicationContext.Ingredient.ToList().Where(x => x?.Name?.ToLower() == modelIngredient?.Name?.ToLower()).First().Name = ingredient.Name.ToLower();
+							RecipeDataBaseContext.Ingredient.ToList().Where(x => x?.Name?.ToLower() == modelIngredient?.Name?.ToLower()).First().Name = ingredient.Name.ToLower();
 
 
-						applicationContext.SaveChanges();
+						RecipeDataBaseContext.SaveChanges();
 						modelRecipeIngredients.Add(new Model.RecipeIngredient(modelRecipe.Id, modelIngredient.Id, ingredient.GetAmount()));
 					}
-					applicationContext.Recipe.Add(modelRecipe);
-					applicationContext.SaveChanges();
+					RecipeDataBaseContext.Recipe.Add(modelRecipe);
+					RecipeDataBaseContext.SaveChanges();
 					foreach (var el in modelRecipeIngredients)
-						el.IdRecipe= applicationContext.Recipe.ToList().Where(x=>x.Name== modelRecipe.Name && x.Actions== modelRecipe.Actions).Last().Id;
+						el.IdRecipe= RecipeDataBaseContext.Recipe.ToList().Where(x=>x.Name== modelRecipe.Name && x.Actions== modelRecipe.Actions).Last().Id;
 					foreach (Model.RecipeIngredient el in modelRecipeIngredients)
-						applicationContext.RecipeIngredient.Add(el);
-					applicationContext.SaveChanges();
+						RecipeDataBaseContext.RecipeIngredient.Add(el);
+					RecipeDataBaseContext.SaveChanges();
 
 					MessageBox.Show($"Рецепт \"{modelRecipe.Name}\" успешно добавлен", "Рецепт успешно добавлен", MessageBoxButton.OK, MessageBoxImage.Information);
 				}
@@ -246,15 +247,15 @@ namespace RecipeDatabase1
 
 		private void DeleteRecipes(List<int> recipeIds)
 		{
-			using (ApplicationContext applicationContext=new(connectionString))
+			using (RecipeDataBaseContext RecipeDataBaseContext=new(connectionString))
 			{
 				for (int i = 0; i < recipeIds.Count; i++)
-					applicationContext.Database.ExecuteSqlRaw("DELETE FROM RecipeIngredient WHERE IdRecipe = {0}",recipeIds[i]);
+					RecipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM RecipeIngredient WHERE IdRecipe = {0}",recipeIds[i]);
 
 				for (int i = 0; i < recipeIds.Count; i++)
-					applicationContext.Database.ExecuteSqlRaw("DELETE FROM Recipe WHERE Id = {0}", recipeIds[i]);
+					RecipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM Recipe WHERE Id = {0}", recipeIds[i]);
 
-				applicationContext.SaveChanges();
+				RecipeDataBaseContext.SaveChanges();
 			}
 		}
 		private void DeleteSelectedRecipes(List<ViewModel.Recipe> recipes)
