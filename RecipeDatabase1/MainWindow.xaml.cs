@@ -33,48 +33,95 @@ namespace RecipeDatabase1
 		private void AddMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			TabControlPages.SelectedIndex = 1;
-		} 
+		}
+
+		private event EventHandler RecipeViewUpdateStartedHandler;
+		private void RecipeViewUpdateStartedHandling()
+		{
+			Dispatcher.Invoke(() =>
+			{
+				UpdateProgressBar.IsIndeterminate = true;
+				Grid.SetRowSpan(RecipesDataGrid, 1);
+				UpdateProgressBarGrid.Visibility = Visibility.Visible;
+			});
+		}
 
 		private void UpdateRecipeView()
 		{
-			using (ApplicationContext applicationContext = new(connectionString))
+			Dispatcher.Invoke(() =>
 			{
-				var recipes = applicationContext.Recipe.ToList();
-				List<ViewModel.Recipe> viewModelRecipes = new List<ViewModel.Recipe>();
-				foreach (var recipe in recipes)
+				UpdateProgressBar.IsIndeterminate = true;
+				Grid.SetRowSpan(RecipesDataGrid, 1);
+				UpdateProgressBarGrid.Visibility=Visibility.Visible;
+			});
+			try
+			{
+
+				using (ApplicationContext applicationContext = new(connectionString))
 				{
-					List<int> ingredientIds = new List<int>();
-					object recipeIngredients = applicationContext.RecipeIngredient.ToList();
-					recipeIngredients=(recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdRecipe == recipe.Id);
-					StringBuilder stringBuilder = new StringBuilder();
-
-					var ingredients = applicationContext.Ingredient.ToList().Where(x => (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Any(y => y.IdIngredient == x.Id));
-					List<int?> ingredientAmounts = new();
-					foreach(var ingredient in ingredients)
+					var recipes = applicationContext.Recipe.ToList();
+					List<ViewModel.Recipe> viewModelRecipes = new List<ViewModel.Recipe>();
+					Dispatcher.Invoke(() => 
 					{
-						var ingredientAmount = (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdIngredient==ingredient.Id);
-						foreach (var recipeIngredient in ingredientAmount)
-							ingredientAmounts.Add(recipeIngredient.Amount);
+						UpdateProgressBar.IsIndeterminate = false;
+						UpdateProgressBar.Maximum=recipes.Count;
+					});
+					for (int recipeIndex=0; recipeIndex<recipes.Count;++recipeIndex)
+					{
+						Thread.Sleep(1);
+						Dispatcher.Invoke(() =>
+						{
+							UpdateProgressBar.Value=recipeIndex;
+						});
+
+						List<int> ingredientIds = new List<int>();
+						object recipeIngredients = applicationContext.RecipeIngredient.ToList();
+						recipeIngredients=(recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdRecipe == recipes[recipeIndex].Id);
+						StringBuilder stringBuilder = new StringBuilder();
+
+						var ingredients = applicationContext.Ingredient.ToList().Where(x => (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Any(y => y.IdIngredient == x.Id));
+						List<int?> ingredientAmounts = new();
+						foreach(var ingredient in ingredients)
+						{
+							var ingredientAmount = (recipeIngredients as IEnumerable<Model.RecipeIngredient>)!.Where(x => x.IdIngredient==ingredient.Id);
+							foreach (var recipeIngredient in ingredientAmount)
+								ingredientAmounts.Add(recipeIngredient.Amount);
+						}
+
+
+						for(int i=0;i<ingredients.Count();++i)
+						{
+							var ingredientMeasure = applicationContext.MeasureUnit.ToList().Where(x => x.Id == ingredients.ElementAt(i).IdMeasureUnit);
+							string ingredientName = "";
+							if(ingredientMeasure is not null)
+								ingredientName= !ingredientMeasure!.Any() ? "" : ingredientMeasure.First().Name!;
+							stringBuilder.AppendLine($"{ingredients.ElementAt(i).Name} {ingredientAmounts[i]} {ingredientName}");
+						}
+						if (stringBuilder.Length > 2)
+							stringBuilder.Remove(stringBuilder.Length - 2, 2);
+
+						viewModelRecipes.Add(new ViewModel.Recipe(recipes[recipeIndex].Name!, recipes[recipeIndex].Actions!, stringBuilder.ToString(), recipes[recipeIndex].Id));
 					}
 
-
-					for(int i=0;i<ingredients.Count();++i)
+					Dispatcher.Invoke
+					(()=>
 					{
-						var ingredientMeasure = applicationContext.MeasureUnit.ToList().Where(x => x.Id == ingredients.ElementAt(i).IdMeasureUnit);
-						string ingredientName = "";
-						if(ingredientMeasure is not null)
-							ingredientName= !ingredientMeasure!.Any() ? "" : ingredientMeasure.First().Name!;
-						stringBuilder.AppendLine($"{ingredients.ElementAt(i).Name} {ingredientAmounts[i]} {ingredientName}");
-					}
-					stringBuilder.Remove(stringBuilder.Length - 2, 2);
-
-					viewModelRecipes.Add(new ViewModel.Recipe(recipe.Name!, recipe.Actions!, stringBuilder.ToString(),recipe.Id));
+						_recipeView?.Update(viewModelRecipes);
+					});
 				}
+			}
+			catch (Exception)
+			{
 
+			}
+			finally
+			{
 				Dispatcher.Invoke
-				(()=>
-					_recipeView?.Update(viewModelRecipes)
-				);
+				(() =>
+				{
+					Grid.SetRowSpan(RecipesDataGrid, 2);
+					UpdateProgressBarGrid.Visibility = Visibility.Collapsed;
+				});
 			}
 		}
 		private void UpdateButton_Click(object sender, RoutedEventArgs e)

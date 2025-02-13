@@ -39,6 +39,7 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="30"/>
 						<RowDefinition Height="*"/>
+						<RowDefinition Height="30"/>
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="120"/>
@@ -57,6 +58,7 @@
 						Margin="5"
 						Grid.Row="1"
 						Grid.ColumnSpan="5"
+						Grid.RowSpan="5"
 						CanUserAddRows="False"
 						IsReadOnly="True"
 						AutoGenerateColumns="False"
@@ -78,6 +80,10 @@
 							<DataGridTextColumn Header="Ингредиенты" Binding="{Binding Ingredients}"/>
 						</DataGrid.Columns>
 					</DataGrid>
+
+					<Grid x:Name="UpdateProgressBarGrid" Visibility="Hidden" Grid.Row="2" Grid.ColumnSpan="4" Margin="5" Height="20" VerticalAlignment="Bottom">
+						<ProgressBar x:Name="UpdateProgressBar" IsIndeterminate="True" />
+					</Grid>
 				</Grid>
 			</TabItem>
 			<TabItem Header="Добавление рецепта">
