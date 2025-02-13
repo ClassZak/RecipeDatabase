@@ -1,4 +1,4 @@
-﻿namespace RecipeDatabase1.Model
+﻿namespace RecipeDatabase.Model
 {
 	public class RecipeIngredient : AModel
 	{

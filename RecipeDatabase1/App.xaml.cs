@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace RecipeDatabase1
+namespace RecipeDatabase
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

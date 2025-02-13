@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RecipeDatabase1.Model
+namespace RecipeDatabase.Model
 {
 	class RecipeDataBaseContext : DbContext
 	{

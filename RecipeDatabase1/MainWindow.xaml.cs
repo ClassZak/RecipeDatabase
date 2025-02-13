@@ -1,6 +1,6 @@
 ﻿using Accessibility;
 using Microsoft.EntityFrameworkCore;
-using RecipeDatabase1.Model;
+using RecipeDatabase.Model;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RecipeDatabase1
+namespace RecipeDatabase
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml

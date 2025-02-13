@@ -1,8 +1,8 @@
-﻿using RecipeDatabase1.Model;
+﻿using RecipeDatabase.Model;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeDatabase1.ViewModel
+namespace RecipeDatabase.ViewModel
 {
 	public class Ingredient :AViewModel
 	{

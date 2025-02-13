@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RecipeDatabase1.Model
+namespace RecipeDatabase.Model
 {
 	internal class MeasureUnit : AModel
 	{

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace RecipeDatabase1.View
+namespace RecipeDatabase.View
 {
 	internal class Recipe : ICollectionView, INotifyPropertyChanged
 	{

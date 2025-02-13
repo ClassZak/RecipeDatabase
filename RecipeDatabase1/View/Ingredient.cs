@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RecipeDatabase1;
+using RecipeDatabase;
 using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Collections;
@@ -12,7 +12,7 @@ using System.Collections.Specialized;
 using System.Windows.Data;
 using System.Xml.Linq;
 
-namespace RecipeDatabase1.View
+namespace RecipeDatabase.View
 {
 	internal class Ingredient : ICollectionView, INotifyPropertyChanged
 	{

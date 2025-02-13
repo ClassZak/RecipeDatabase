@@ -1,4 +1,4 @@
-﻿namespace RecipeDatabase1.ViewModel
+﻿namespace RecipeDatabase.ViewModel
 {
 	public class Recipe : AViewModel
 	{
