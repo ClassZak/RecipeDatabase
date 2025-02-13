@@ -10,7 +10,7 @@
 		Title="Книга рецептов"
 		
 		Height="450" Width="800"
-		MinHeight="350" MinWidth="700">
+		MinHeight="350" MinWidth="700" Icon="/Icon.png">
 	<Window.Resources>
 		<Style x:Key="ListViewFocusVisualStyle1"/>
 	</Window.Resources>

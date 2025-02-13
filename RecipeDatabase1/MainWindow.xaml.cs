@@ -130,6 +130,8 @@ namespace RecipeDatabase1
 			{
 				UpdateRecipeView();
 			});
+			if (TabControlPages.SelectedIndex != 0)
+				TabControlPages.SelectedIndex = 0;
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
