@@ -1,61 +1,58 @@
-﻿using RecipeDatabase.Model;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Collections.ObjectModel;
+using System.Collections;
+using System.Collections.Specialized;
+using System.Windows.Data;
+using System.Xml.Linq;
 
 namespace RecipeDatabase.ViewModel
 {
-	public class Ingredient :AViewModel
+	public class Ingredient : INotifyPropertyChanged
 	{
+		private ObservableCollection<Model.Viewed.Ingredient> IngredientsViewModels { get; set; }
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-
-		private string _name = "";
-		public string Name { get { return _name; } set {_name = value; } }
-		private string? _measureUnit="шт";
-		public string MeasureUnit{ get { return _measureUnit is null ? "" : _measureUnit; } set {_measureUnit = value; } }
-		private int? _amount;
-		public string Amount
-		{ 
-			get
-			{ 
-				return _amount is null ? "" : $"{_amount}"; 
-			}
-			set 
-			{
-				{
-					int parsedValue;
-					bool parsingSuccess=int.TryParse(value, out parsedValue);
-					if(parsingSuccess)
-						_amount = parsedValue;
-					else _amount = null;
-				} 
-			}
-		}
-		public Ingredient(Ingredient ingredient):base(ingredient.GetId())
+		private ICollectionView _ingredients;
+		public ICollectionView Ingredients
 		{
-			_name = ingredient.Name!;
-			_amount = ingredient._amount;
-			_measureUnit = ingredient._measureUnit;
+			get { return _ingredients; }
+			set { _ingredients = value; }
 		}
+		public void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
 		public Ingredient()
 		{
-		}
-		public Ingredient(string name, int? amount, string measureUnit, int id=0):base(id)
-		{
-			_name = name;
-			_amount = amount;
-			_measureUnit = measureUnit;
+			IngredientsViewModels = new();
+			Ingredients = CollectionViewSource.GetDefaultView(IngredientsViewModels);
 		}
 
-
-		public Ingredient(Model.Ingredient ingredient) : base(ingredient.Id)
+		public void Clear()
 		{
-			Name = ingredient.Name!;
+			IngredientsViewModels.Clear();
+			OnPropertyChanged(nameof(IngredientsViewModels));
 		}
-
-
-		public int? GetAmount()
+		public void Add(Model.Viewed.Ingredient element)
 		{
-			return _amount;
+			IngredientsViewModels.Add(element);
+			OnPropertyChanged(nameof(IngredientsViewModels));
+		}
+		public void Remove(Model.Viewed.Ingredient ingredient)
+		{
+			IngredientsViewModels.Remove(ingredient);
+			OnPropertyChanged(nameof(IngredientsViewModels));
+		}
+		public IEnumerable<Model.Viewed.Ingredient> GetIngredients()
+		{
+			return IngredientsViewModels;
 		}
 	}
 }
