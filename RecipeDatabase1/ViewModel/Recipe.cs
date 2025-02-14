@@ -1,5 +1,7 @@
-﻿using RecipeDatabase.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipeDatabase.Model;
 using RecipeDatabase.Model.DataBase;
+using RecipeDatabase.Model.Viewed;
 using RecipeDatabase.Services.Commands;
 using System;
 using System.Collections;
@@ -11,6 +13,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 
@@ -19,64 +23,105 @@ namespace RecipeDatabase.ViewModel
 	internal class Recipe : INotifyPropertyChanged
 	{
 		string connectionString = "Server=localhost;Database=RecipeDataBase;Trusted_Connection=True;Encrypt=false;";
-		private ObservableCollection<Model.Viewed.Recipe> RecipeViewModels { get; set; }
+		public ObservableCollection<Model.Viewed.Recipe> Recipes { get; set; } = new();
 		public event PropertyChangedEventHandler? PropertyChanged;
-
-		private ICollectionView? _recipes;
-		public ICollectionView? RecipesModelView
-		{
-			get { return _recipes; }
-			set { _recipes = value; }
-		}
 		public void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		public RelayCommand _updateCommand;
-		public RelayCommand UpdateCommand
-		{
-			get
-			{
-				return _updateCommand ??
-				(_updateCommand = new RelayCommand(obj => 
-				{
-					using (RecipeDataBaseContext recipeDataBaseContext = new(connectionString))
-					{
-						var recipes = recipeDataBaseContext.Recipe.ToList();
-						for (int recipeIndex = 0; recipeIndex < recipes.Count; ++recipeIndex)
-						{
-							Thread.Sleep(1);
-
-							List<int> ingredientIds = new List<int>();
-							object recipeIngredients = recipeDataBaseContext.RecipeIngredient.ToList();
-							recipeIngredients = (recipeIngredients as IEnumerable<RecipeIngredient>)!.Where(x => x.IdRecipe == recipes[recipeIndex].Id);
-							StringBuilder stringBuilder = new StringBuilder();
-
-							var ingredients = recipeDataBaseContext.Ingredient.ToList().Where(x => (recipeIngredients as IEnumerable<RecipeIngredient>)!.Any(y => y.IdIngredient == x.Id));
-							ViewModel.Ingredient ingredientsViewModel=new ViewModel.Ingredient();
-							foreach (var ingredient in ingredients)
-								ingredientsViewModel.Add(new Model.Viewed.Ingredient(ingredient));
-
-							Model.Viewed.Recipe recipe = new Model.Viewed.Recipe(recipes[recipeIndex]);
-							recipe.Ingredients= ingredientsViewModel;
-
-							RecipeViewModels.Add(recipe);
-						}
-					}
-				}));
-			}
-		}
 		public Recipe()
 		{
-			RecipeViewModels = new();
-			RecipesModelView = CollectionViewSource.GetDefaultView(RecipeViewModels);
-			UpdateCommand.Execute(this);
+			Update.Execute(this);
 		}
 		public void Remove(int recipeIndex)
 		{
-			RecipeViewModels.RemoveAt(recipeIndex);
-			OnPropertyChanged(nameof(RecipeViewModels));
+			Recipes.RemoveAt(recipeIndex);
+			OnPropertyChanged(nameof(Recipes));
+		}
+		public RelayCommand? _update;
+		public RelayCommand Update
+		{
+			get
+			{
+				return _update ?? (_update = new(obj =>
+				{
+					Task.Run(() =>
+					{
+						using (RecipeDataBaseContext recipeDataBaseContext = new(connectionString))
+						{
+							List<Model.DataBase.Recipe> recipes = recipeDataBaseContext.Recipe.ToList();
+							List<Model.Viewed.Recipe> viewedRecipes = new();
+							foreach (var recipe in recipes)
+							{
+								List<Model.DataBase.RecipeIngredient> recipeIngredients = recipeDataBaseContext.RecipeIngredient.ToList().Where(x => x.IdRecipe == recipe.Id).ToList();
+								List<Model.DataBase.Ingredient> ingredients = recipeDataBaseContext.Ingredient.ToList().Where(x => recipeIngredients.Any(y => x.Id == y.IdIngredient)).ToList();
+
+								List<Model.Viewed.Ingredient> viewedIngredients = new();
+								for (int i = 0; i < ingredients.Count; ++i)
+								{
+									MeasureUnit? measureUnit = null;
+									measureUnit = recipeDataBaseContext.MeasureUnit.ToList().Where(x => x.Id == ingredients[i].Id).FirstOrDefault();
+
+									Model.Viewed.Ingredient ingredient = new(ingredients[i]);
+									ingredient.Amount = recipeIngredients[i].Amount;
+									ingredient.MeasureUnit = recipeDataBaseContext.MeasureUnit.ToList().Where(x => x.Id == ingredients[i].Id).FirstOrDefault()?.Name;
+
+									viewedIngredients.Add(ingredient);
+								}
+
+								Model.Viewed.Recipe viewedRecipe = new(recipe);
+
+								for (int i = 0; i < viewedIngredients.Count; ++i)
+									viewedRecipe.Ingredients.Add(viewedIngredients[0]);
+
+								viewedRecipes.Add(viewedRecipe);
+							}
+							Application.Current.Dispatcher.Invoke(new Action(() =>
+							{
+								Recipes.Clear();
+								foreach (var el in viewedRecipes)
+									Recipes.Add(el);
+
+								OnPropertyChanged(nameof(Recipes));
+							}));
+						}
+					});
+				}));
+			}
+		}
+		public RelayCommand? _delete;
+		public RelayCommand Delete
+		{
+			get 
+			{
+				return _delete ?? (_delete = new(obj =>
+				{
+					DataGrid? dataGrid=obj as DataGrid;
+					List<Model.Viewed.Recipe> selectedRecipes = new();
+					if(dataGrid is not null)
+						if(dataGrid.SelectedItems is not null)
+						{ 
+							foreach(var el in dataGrid?.SelectedItems!)
+								if (el is Model.Viewed.Recipe)
+									selectedRecipes.Add((el as Model.Viewed.Recipe)!);
+							Task.Run(() => 
+							{
+								using (RecipeDataBaseContext recipeDataBaseContext=new(connectionString))
+								{
+									foreach (var el in selectedRecipes)
+									{
+										recipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM RecipeIngredient WHERE IdRecipe={0}",el.Id);
+										recipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM Recipe WHERE Id={0}", el.Id);
+									}
+									recipeDataBaseContext.SaveChangesAsync();
+								}
+							});
+							foreach (var el in selectedRecipes)
+								Recipes.Remove(el);
+						}
+				})); 
+			}
 		}
 	}
 }

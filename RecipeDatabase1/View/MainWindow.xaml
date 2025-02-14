@@ -14,9 +14,7 @@
 	<Window.Resources>
 		<Style x:Key="ListViewFocusVisualStyle1"/>
 	</Window.Resources>
-
 	<Grid>
-
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20"/>
 			<RowDefinition Height="20"/>
@@ -35,6 +33,9 @@
 
 		<TabControl  Grid.Row="1" Grid.RowSpan="2" Name="TabControlPages">
 			<TabItem Header="Рецепты">
+				<TabItem.DataContext>
+					<ViewModel:Recipe/>
+				</TabItem.DataContext>
 				<Grid Background="#FFE5E5E5">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="30"/>
@@ -43,14 +44,10 @@
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="120"/>
-						<ColumnDefinition Width="120"/>
-						<ColumnDefinition Width="57*"/>
-						<ColumnDefinition Width="220*"/>
+						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
 
-					<Button Content="Обновить" Margin="5,5,5,5" Click="UpdateButton_Click"/>
-					<TextBlock Text="Запрос:" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
-					<TextBox Grid.Column="2" Margin="5,5,5,5" Text="Все" Grid.ColumnSpan="2"/>
+					<Button Content="Обновить" Margin="5,5,5,5" Command="{Binding Update}"/>
 
 
 					<DataGrid
@@ -59,18 +56,13 @@
 						Grid.Row="1"
 						Grid.ColumnSpan="5"
 						Grid.RowSpan="5"
-						CanUserAddRows="False"
-						IsReadOnly="True"
+						CanUserAddRows="True"
 						AutoGenerateColumns="False"
-						ItemsSource="{Binding RecipesModelView}"
+						ItemsSource="{Binding Recipes}"
 					>
-						<DataGrid.DataContext>
-							<ViewModel:Recipe/>
-						</DataGrid.DataContext>
-
 						<DataGrid.ContextMenu>
 							<ContextMenu>
-								<MenuItem Header="Удалить" Click="RecipeDataGridDeleteMenu_Click"/>
+								<MenuItem Header="Удалить" Click="RecipeDataGridDeleteMenu_Click" Command="{Binding Delete}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 
@@ -81,8 +73,6 @@
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
 										<DataGrid
-											x:Name="IngredientDataGrid"
-											Margin="5"
 											Grid.Column="1"
 											Grid.Row="1"
 											Grid.ColumnSpan="5"
@@ -90,9 +80,6 @@
 											AutoGenerateColumns="False"
 											ItemsSource="{Binding Ingredients}"
 											>		
-											<DataGrid.DataContext>
-												<ViewModel:Ingredient/>
-											</DataGrid.DataContext>
 											<DataGrid.ContextMenu>
 												<ContextMenu>
 													<MenuItem Header="Удалить" Click="IngredientDataGridDeleteMenu_Click"/>

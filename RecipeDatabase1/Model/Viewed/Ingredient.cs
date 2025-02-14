@@ -14,8 +14,14 @@ namespace RecipeDatabase.Model.Viewed
 		public Ingredient(DataBase.Ingredient ingredient):base(ingredient)
 		{
 		}
-		public Ingredient(string name, int? idMeasureUnit = null) : base(name, idMeasureUnit)
+
+		public string? MeasureUnit{ get; set; }
+		public int? Amount { get; set; }
+		public Ingredient(string name, int? idMeasureUnit=null, string? measureUnit=null, int? Amount=null):
+		base(name,idMeasureUnit)
 		{
+			MeasureUnit = measureUnit;
+			Amount = Amount;
 		}
 	}
 }

@@ -64,7 +64,6 @@ namespace RecipeDatabase
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			_recipeView = (RecipesDataGrid.DataContext) as ViewModel.Recipe;
-			_ingredientView = (IngredientDataGrid.DataContext) as ViewModel.Ingredient;
 
 			Task.Run(() =>
 			{

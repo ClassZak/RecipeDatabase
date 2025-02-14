@@ -1,8 +1,10 @@
-﻿namespace RecipeDatabase.Model.Viewed
+﻿using System.Collections.ObjectModel;
+
+namespace RecipeDatabase.Model.Viewed
 {
 	public class Recipe : DataBase.Recipe
 	{
-		public ViewModel.Ingredient? Ingredients { get; set; }
+		public ObservableCollection<Model.Viewed.Ingredient> Ingredients { get; set; } = new();
 		public Recipe() : base()
 		{
 		}

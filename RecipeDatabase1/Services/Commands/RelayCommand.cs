@@ -34,7 +34,7 @@ namespace RecipeDatabase.Services.Commands
 
 		public void Execute(object? parameter)
 		{
-			if(parameter is not null)
+			if(CanExecute(parameter))
 				_execute(parameter);
 		}
 	}
