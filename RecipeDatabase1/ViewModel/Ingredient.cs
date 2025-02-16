@@ -10,6 +10,8 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Windows.Data;
 using System.Xml.Linq;
+using RecipeDatabase.Services.Commands;
+using System.Windows.Controls;
 
 namespace RecipeDatabase.ViewModel
 {
@@ -28,31 +30,31 @@ namespace RecipeDatabase.ViewModel
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		private RelayCommand? _deleteCommand;
+		public RelayCommand Delete
+		{
+			get
+			{
+				return _deleteCommand ?? (_deleteCommand = new(obj =>
+				{
+					DataGrid? dataGrid = obj as DataGrid;
+					if(dataGrid is not null)
+					{
+						List<Model.Viewed.Ingredient> selectedIngredients = new();
+						foreach (var el in dataGrid.SelectedItems)
+							if (el is Model.Viewed.Ingredient)
+								selectedIngredients.Add((el as Model.Viewed.Ingredient)!);
+						foreach (var el in selectedIngredients)
+							IngredientsViewModels.Remove(el);
+					}
+				}));
+			}
+		}
 
 		public Ingredient()
 		{
 			IngredientsViewModels = new();
 			Ingredients = CollectionViewSource.GetDefaultView(IngredientsViewModels);
-		}
-
-		public void Clear()
-		{
-			IngredientsViewModels.Clear();
-			OnPropertyChanged(nameof(IngredientsViewModels));
-		}
-		public void Add(Model.Viewed.Ingredient element)
-		{
-			IngredientsViewModels.Add(element);
-			OnPropertyChanged(nameof(IngredientsViewModels));
-		}
-		public void Remove(Model.Viewed.Ingredient ingredient)
-		{
-			IngredientsViewModels.Remove(ingredient);
-			OnPropertyChanged(nameof(IngredientsViewModels));
-		}
-		public IEnumerable<Model.Viewed.Ingredient> GetIngredients()
-		{
-			return IngredientsViewModels;
 		}
 	}
 }

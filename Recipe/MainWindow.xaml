@@ -6,7 +6,59 @@
         xmlns:local="clr-namespace:Recipe"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+	<Window.DataContext>
+		<local:MainViewModel/>
+	</Window.DataContext>
+	<Grid>
+		<DataGrid ItemsSource="{Binding ParentItems}" AutoGenerateColumns="False">
+			<DataGrid.Columns>
+				<!-- Example column for parent data -->
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}" />
 
-    </Grid>
+				<!-- Column with the nested Child DataGrid -->
+				<DataGridTemplateColumn Header="Child Items">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<DataGrid ItemsSource="{Binding ChildItems}" AutoGenerateColumns="False" HeadersVisibility="Column">
+								<DataGrid.Columns>
+									<!-- Example column for child data -->
+									<DataGridTextColumn Header="Child Name" Binding="{Binding ChildName}" />
+								</DataGrid.Columns>
+								<!-- Context menu for deleting a child item -->
+								<DataGrid.RowStyle>
+									<Style TargetType="DataGridRow">
+										<Setter Property="ContextMenu">
+											<Setter.Value>
+												<ContextMenu>
+													<MenuItem Header="Delete"
+                                Command="{Binding DataContext.DeleteChildCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding}" />
+												</ContextMenu>
+											</Setter.Value>
+										</Setter>
+									</Style>
+								</DataGrid.RowStyle>
+							</DataGrid>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+
+			<!-- Context menu for deleting a parent item -->
+			<DataGrid.RowStyle>
+				<Style TargetType="DataGridRow">
+					<Setter Property="ContextMenu">
+						<Setter.Value>
+							<ContextMenu>
+								<MenuItem Header="Delete"
+                      Command="{Binding DataContext.DeleteParentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                      CommandParameter="{Binding}" />
+							</ContextMenu>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</DataGrid.RowStyle>
+		</DataGrid>
+
+	</Grid>
 </Window>

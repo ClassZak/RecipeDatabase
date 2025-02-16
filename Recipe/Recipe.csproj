@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.22" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.13.40008" />
   </ItemGroup>
 
   <ItemGroup>

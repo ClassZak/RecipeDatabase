@@ -22,15 +22,15 @@ namespace RecipeDatabase.ViewModel
 
 		public MainViewModel()
 		{
-			List<Model.Viewed.Recipe> recipes = new()
+			/*List<Model.Viewed.Recipe> recipes = new()
 			{
 				new Model.Viewed.Recipe("dfgfg", "hhdfhfgjjj"),
 				new Model.Viewed.Recipe("111dfgfg", "hhdfhfgjj345j")
 			};
-			recipes[0].Ingredients.Add(new("fgh", null, null, 23));
+			recipes[0].Ingredients.Add(new("fgh",0, null, null, 23));
 
 			foreach(var el in  recipes)
-				Recipes.Add(el);
+				Recipes.Add(el);*/
 		}
 	}
 }

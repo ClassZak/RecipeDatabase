@@ -39,7 +39,7 @@ namespace RecipeDatabase.ViewModel
 			Recipes.RemoveAt(recipeIndex);
 			OnPropertyChanged(nameof(Recipes));
 		}
-		public RelayCommand? _update;
+		private RelayCommand? _update;
 		public RelayCommand Update
 		{
 			get
@@ -72,8 +72,10 @@ namespace RecipeDatabase.ViewModel
 
 								Model.Viewed.Recipe viewedRecipe = new(recipe);
 
+								foreach (var el in viewedIngredients)
+									el.IdRecipe = recipe.Id;
 								for (int i = 0; i < viewedIngredients.Count; ++i)
-									viewedRecipe.Ingredients.Add(viewedIngredients[0]);
+									viewedRecipe.Ingredients.Add(viewedIngredients[i]);
 
 								viewedRecipes.Add(viewedRecipe);
 							}
@@ -90,28 +92,28 @@ namespace RecipeDatabase.ViewModel
 				}));
 			}
 		}
-		public RelayCommand? _delete;
+		private RelayCommand? _delete;
 		public RelayCommand Delete
 		{
-			get 
+			get
 			{
 				return _delete ?? (_delete = new(obj =>
 				{
-					DataGrid? dataGrid=obj as DataGrid;
+					DataGrid? dataGrid = obj as DataGrid;
 					List<Model.Viewed.Recipe> selectedRecipes = new();
-					if(dataGrid is not null)
-						if(dataGrid.SelectedItems is not null)
-						{ 
-							foreach(var el in dataGrid?.SelectedItems!)
+					if (dataGrid is not null)
+						if (dataGrid.SelectedItems is not null)
+						{
+							foreach (var el in dataGrid?.SelectedItems!)
 								if (el is Model.Viewed.Recipe)
 									selectedRecipes.Add((el as Model.Viewed.Recipe)!);
-							Task.Run(() => 
+							Task.Run(() =>
 							{
-								using (RecipeDataBaseContext recipeDataBaseContext=new(connectionString))
+								using (RecipeDataBaseContext recipeDataBaseContext = new(connectionString))
 								{
 									foreach (var el in selectedRecipes)
 									{
-										recipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM RecipeIngredient WHERE IdRecipe={0}",el.Id);
+										recipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM RecipeIngredient WHERE IdRecipe={0}", el.Id);
 										recipeDataBaseContext.Database.ExecuteSqlRaw("DELETE FROM Recipe WHERE Id={0}", el.Id);
 									}
 									recipeDataBaseContext.SaveChangesAsync();
@@ -120,7 +122,48 @@ namespace RecipeDatabase.ViewModel
 							foreach (var el in selectedRecipes)
 								Recipes.Remove(el);
 						}
-				})); 
+				}));
+			}
+		}
+		private RelayCommand? _deleteIngredient;
+		public RelayCommand DeleteIngredient
+		{
+			get
+			{
+				return _deleteIngredient ??= new RelayCommand(obj =>
+				{
+					if (obj is IList selectedItems)
+					{
+						var ingredientsToDelete = selectedItems.Cast<Model.Viewed.Ingredient>().ToList();
+
+						// Удаление из базы данных
+						Task.Run(() =>
+						{
+							using (var context = new RecipeDataBaseContext(connectionString))
+							{
+								foreach (var ingredient in ingredientsToDelete)
+								{
+									var relation = context.RecipeIngredient
+										.FirstOrDefault(ri => ri.IdRecipe == ingredient.IdRecipe
+														   && ri.IdIngredient == ingredient.Id);
+									if (relation != null)
+									{
+										context.RecipeIngredient.Remove(relation);
+									}
+								}
+								context.SaveChanges();
+							}
+						});
+
+						// Удаление из ViewModel
+						foreach (var ingredient in ingredientsToDelete)
+						{
+							var recipe = Recipes.FirstOrDefault(r => r.Id == ingredient.IdRecipe);
+							recipe?.Ingredients.Remove(ingredient);
+						}
+						OnPropertyChanged(nameof(Recipes));
+					}
+				});
 			}
 		}
 	}

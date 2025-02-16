@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace RecipeDatabase.Model
 {
@@ -34,6 +35,19 @@ namespace RecipeDatabase.Model
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer(_connectionString);
+		}
+		private async void RecipesDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
+		{
+			if (e.NewItem is Model.Viewed.Recipe newRecipe)
+			{
+				using (var context = new RecipeDataBaseContext(_connectionString))
+				{
+					var dbRecipe = new Model.DataBase.Recipe(newRecipe.Name, newRecipe.Actions);
+					context.Recipe.Add(dbRecipe);
+					await context.SaveChangesAsync();
+					newRecipe.Id = dbRecipe.Id; // Обновляем ID после сохранения
+				}
+			}
 		}
 
 		public DbSet<Ingredient> Ingredient { get; set; }

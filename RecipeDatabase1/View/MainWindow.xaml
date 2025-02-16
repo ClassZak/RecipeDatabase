@@ -11,9 +11,6 @@
 		
 		Height="450" Width="800"
 		MinHeight="350" MinWidth="700" Icon="/Icon.png">
-	<Window.Resources>
-		<Style x:Key="ListViewFocusVisualStyle1"/>
-	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="20"/>
@@ -57,12 +54,16 @@
 						Grid.ColumnSpan="5"
 						Grid.RowSpan="5"
 						CanUserAddRows="True"
-						AutoGenerateColumns="False"
+						TextInput="RecipesDataGrid_TextInput"
+						AddingNewItem="RecipesDataGrid_AddingNewItem"
+						SelectedCellsChanged="RecipesDataGrid_SelectedCellsChanged"
 						ItemsSource="{Binding Recipes}"
+						AutoGenerateColumns="False"
+
 					>
 						<DataGrid.ContextMenu>
 							<ContextMenu>
-								<MenuItem Header="Удалить" Click="RecipeDataGridDeleteMenu_Click" Command="{Binding Delete}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+								<MenuItem Header="Удалить" Command="{Binding Delete}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 
@@ -78,11 +79,12 @@
 											Grid.ColumnSpan="5"
 											CanUserAddRows="True"
 											AutoGenerateColumns="False"
-											ItemsSource="{Binding Ingredients}"
-											>		
-											<DataGrid.ContextMenu>
+											ItemsSource="{Binding Path=Ingredients}"
+											>
+											<DataGrid.ContextMenu DataContext="#RecipesDataGrid.DataContext">
 												<ContextMenu>
-													<MenuItem Header="Удалить" Click="IngredientDataGridDeleteMenu_Click"/>
+													<MenuItem Header="Удалить"  Command="{Binding Delete}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+													</MenuItem>
 												</ContextMenu>
 											</DataGrid.ContextMenu>
 											<DataGrid.Columns>

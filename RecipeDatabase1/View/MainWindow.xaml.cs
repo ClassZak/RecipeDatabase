@@ -84,5 +84,20 @@ namespace RecipeDatabase
 		private void RecipeDataGridDeleteMenu_Click(object sender, RoutedEventArgs e)
 		{
 		}
+
+		private void RecipesDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
+		{
+
+        }
+
+		private void RecipesDataGrid_TextInput(object sender, TextCompositionEventArgs e)
+		{
+
+		}
+
+		private void RecipesDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+		{
+
+		}
 	}
 }
