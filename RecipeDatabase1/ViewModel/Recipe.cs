@@ -32,19 +32,19 @@ namespace RecipeDatabase.ViewModel
 
 		public Recipe()
 		{
-			Update.Execute(this);
+			UpdateCommand.Execute(this);
 		}
 		public void Remove(int recipeIndex)
 		{
 			Recipes.RemoveAt(recipeIndex);
 			OnPropertyChanged(nameof(Recipes));
 		}
-		private RelayCommand? _update;
-		public RelayCommand Update
+		private RelayCommand? _updateCommand;
+		public RelayCommand UpdateCommand
 		{
 			get
 			{
-				return _update ?? (_update = new(obj =>
+				return _updateCommand ?? (_updateCommand = new(obj =>
 				{
 					Task.Run(() =>
 					{
@@ -92,12 +92,12 @@ namespace RecipeDatabase.ViewModel
 				}));
 			}
 		}
-		private RelayCommand? _delete;
-		public RelayCommand Delete
+		private RelayCommand? _deleteCommand;
+		public RelayCommand DeleteCommand
 		{
 			get
 			{
-				return _delete ?? (_delete = new(obj =>
+				return _deleteCommand ?? (_deleteCommand = new(obj =>
 				{
 					DataGrid? dataGrid = obj as DataGrid;
 					List<Model.Viewed.Recipe> selectedRecipes = new();
@@ -125,12 +125,23 @@ namespace RecipeDatabase.ViewModel
 				}));
 			}
 		}
-		private RelayCommand? _deleteIngredient;
-		public RelayCommand DeleteIngredient
+		private RelayCommand? _editIngredientsCommand;
+		public RelayCommand EditIngredientsCommand
 		{
 			get
 			{
-				return _deleteIngredient ??= new RelayCommand(obj =>
+				return _editIngredientsCommand ?? (_editIngredientsCommand = new(obj =>
+				{
+					
+				}));
+			}
+		}
+		private RelayCommand? _deleteIngredientCommand;
+		public RelayCommand DeleteIngredientCommand
+		{
+			get
+			{
+				return _deleteIngredientCommand ??= new RelayCommand(obj =>
 				{
 					if (obj is IList selectedItems)
 					{

@@ -63,7 +63,7 @@
 					>
 						<DataGrid.ContextMenu>
 							<ContextMenu>
-								<MenuItem Header="Удалить" Command="{Binding Delete}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+								<MenuItem Header="Удалить" Command="{Binding DeleteCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 
@@ -73,26 +73,7 @@
 							<DataGridTemplateColumn Header="Ингредиенты">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
-										<DataGrid
-											Grid.Column="1"
-											Grid.Row="1"
-											Grid.ColumnSpan="5"
-											CanUserAddRows="True"
-											AutoGenerateColumns="False"
-											ItemsSource="{Binding Path=Ingredients}"
-											>
-											<DataGrid.ContextMenu DataContext="#RecipesDataGrid.DataContext">
-												<ContextMenu>
-													<MenuItem Header="Удалить"  Command="{Binding Delete}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
-													</MenuItem>
-												</ContextMenu>
-											</DataGrid.ContextMenu>
-											<DataGrid.Columns>
-												<DataGridTextColumn Header="Название"			Binding="{Binding Name}"/>
-												<DataGridTextColumn Header="Количество"			Binding="{Binding Amount}"/>
-												<DataGridTextColumn Header="Единицы измерения"	Binding="{Binding MeasureUnit}"/>
-											</DataGrid.Columns>
-										</DataGrid>
+										<Button Content="Редактировать" Command="{Binding DataContext.EditIngredientsCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}"/>
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
